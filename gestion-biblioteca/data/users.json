@@ -1,0 +1,106 @@
+[
+    {
+        "ID_Usuario": "U001",
+        "Nombre": "Maria",
+        "Apellido": "González",
+        "Email": "maria.gonzalez@email.com",
+        "Telefono": "1155667788",
+        "Fecha_Registro": "10/01/2024"
+    },
+    {
+        "ID_Usuario": "U002",
+        "Nombre": "Ana",
+        "Apellido": "Martínez",
+        "Email": "ana.martinez@email.com",
+        "Telefono": "1177889900",
+        "Fecha_Registro": "15/01/2024"
+    },
+    {
+        "ID_Usuario": "U003",
+        "Nombre": "Laura",
+        "Apellido": "Fernández",
+        "Email": "laura.fernandez@email.com",
+        "Telefono": "1199001122",
+        "Fecha_Registro": "20/01/2024"
+    },
+    {
+        "ID_Usuario": "U004",
+        "Nombre": "Carlos",
+        "Apellido": "Rodríguez",
+        "Email": "carlos.rodriguez@email.com",
+        "Telefono": "1166778899",
+        "Fecha_Registro": "12/01/2024"
+    },
+    {
+        "ID_Usuario": "U005",
+        "Nombre": "Juan",
+        "Apellido": "Pérez",
+        "Email": "juan.perez@email.com",
+        "Telefono": "1188990011",
+        "Fecha_Registro": "18/01/2024"
+    },
+    {
+        "ID_Usuario": "U006",
+        "Nombre": "Sofia",
+        "Apellido": "Vargas",
+        "Email": "sofia.vargas@email.com",
+        "Telefono": "1122334455",
+        "Fecha_Registro": "25/01/2024"
+    },
+    {
+        "ID_Usuario": "U007",
+        "Nombre": "Mateo",
+        "Apellido": "Rojas",
+        "Email": "mateo.rojas@email.com",
+        "Telefono": "1133445566",
+        "Fecha_Registro": "28/01/2024"
+    },
+    {
+        "ID_Usuario": "U008",
+        "Nombre": "Valentina",
+        "Apellido": "Castro",
+        "Email": "valentina.castro@email.com",
+        "Telefono": "1144556677",
+        "Fecha_Registro": "01/02/2024"
+    },
+    {
+        "ID_Usuario": "U009",
+        "Nombre": "Daniel",
+        "Apellido": "Silva",
+        "Email": "daniel.silva@email.com",
+        "Telefono": "1155667788",
+        "Fecha_Registro": "05/02/2024"
+    },
+    {
+        "ID_Usuario": "U010",
+        "Nombre": "Lucía",
+        "Apellido": "Flores",
+        "Email": "lucia.flores@email.com",
+        "Telefono": "1166778899",
+        "Fecha_Registro": "08/02/2024"
+    },
+    {
+        "ID_Usuario": "U011",
+        "Nombre": "Alejandro",
+        "Apellido": "Rivera",
+        "Email": "alejandro.rivera@email.com",
+        "Telefono": "1177889900",
+        "Fecha_Registro": "12/02/2024"
+    },
+    {
+        "ID_Usuario": "U012",
+        "Nombre": "Camila",
+        "Apellido": "Torres",
+        "Email": "camila.torres@email.com",
+        "Telefono": "1188990011",
+        "Fecha_Registro": "15/02/2024"
+    },
+    {
+        "ID_Usuario": "U013",
+        "Nombre": "Martín",
+        "Apellido": "Morales",
+        "Email": "martin.morales@email.com",
+        "Telefono": "1199001122",
+        "Fecha_Registro": "20/02/2024"
+    }
+]
