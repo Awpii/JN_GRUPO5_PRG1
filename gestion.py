@@ -59,25 +59,27 @@ def crear_prestamo(libros, prestamos, id_prestamo_actual):
         if entrada_id.isdigit():
             id_libro = int(entrada_id)
             indice_libro = -1
-            for i in range(len(libros)):
+            i = 0
+            while i < len(libros) and indice_libro == -1:
                 if libros[i][0] == id_libro:
                     indice_libro = i
-                    break
+                i += 1
             if indice_libro != -1:
-                if libros[indice_libro][3] == "SI":
-                    print("Operación denegada: El libro ya se encuentra prestado.")
+                if libros[indice_libro][3] == "S":
+                    print("Operacion denegada: el libro ya esta prestado.")
                 else:
                     nombre = input("Ingrese el nombre del solicitante: ")
                     nuevo_prestamo = [id_prestamo_actual, id_libro, nombre]
                     prestamos.append(nuevo_prestamo)
-                    libros[indice_libro][3] = "SI"
-                    print("Prestamo generado con exito.")
+                    libros[indice_libro][3] = "S"
+                    print("Prestamo creado exitosamente.")
                     return id_prestamo_actual + 1
             else:
-                print("No se encontró un libro con el ID dado.")
+                print("No se encontró un libro con el ID provisto.")
         else:
-            print("Error: debe ingresar un número valido.")
+            print("Error: debe ingresar un numero valido.")
     return id_prestamo_actual
+
 
 def eliminar_prestamo(libros, prestamos):
     imprimir_prestamos(prestamos)
@@ -86,21 +88,25 @@ def eliminar_prestamo(libros, prestamos):
         if entrada_id.isdigit():
             id_prestamo = int(entrada_id)
             indice_prestamo = -1
-            
-            for i in range(len(prestamos)):
+            i = 0
+            while i < len(prestamos) and indice_prestamo == -1:
                 if prestamos[i][0] == id_prestamo:
                     indice_prestamo = i
-                    break
-            
+                i += 1
             if indice_prestamo != -1:
                 id_libro = prestamos[indice_prestamo][1]
                 prestamos.pop(indice_prestamo)
-                for j in range(len(libros)):
+                encontrado = False
+                
+                j = 0
+                while j < len(libros) and not encontrado:
                     if libros[j][0] == id_libro:
-                        libros[j][3] = "NO"
-                        break
-                print("Préstamo cerrado con éxito.")
+                        libros[j][3] = "N" #hace que este disponible de nuevo
+                        encontrado = True
+                    j += 1
+                print("Prestamo eliminado exitosamente.")
             else:
-                print("No se encontró un préstamo con el ID dado.")
+                print("No se encontro un prestamo con el ID indicado.")
         else:
-            print("Error: debe ingresar un número valido.")
+            print("Error: debe ingresar un numero valido.")
+            
