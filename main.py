@@ -16,7 +16,9 @@ matriz_prestamos = []
 id_libro_auto = 1
 id_prestamo_auto = 1 #estos son contadores para los IDs, los cambio despues
 
-while True:
+seguir = True
+
+while seguir:
     print("Seleccione una opción:")
     print("1. Añadir libro")
     print("2. Eliminar libro")
@@ -34,9 +36,9 @@ while True:
         case "3":
             id_prestamo_auto = gestion.crear_prestamo(matriz_libros, matriz_prestamos, id_prestamo_auto)
         case "4":
-            gestion.eliminar_prestamo(matriz_prestamos)
+            gestion.eliminar_prestamo(matriz_libros, matriz_prestamos)
         case "5":
             print("Saliendo del programa.")
-            break
+            seguir = False
         case _:
             print("Opción no válida. Por favor, ingrese un número del 1 al 5.")

@@ -39,16 +39,18 @@ def eliminar_libro(libros):
         if entrada_id.isdigit(): #no podemos usar excepciones xd
             id_eliminar = int(entrada_id)
             encontrado = False
-        for i in range(len(libros)):
-            if libros[i][0] == id_eliminar:
-                libros.pop(i)
-                encontrado = True
-                print("Libro eliminado con exito.")
-        
-        if not encontrado:
-            print("No se encontró un libro con el ID proporcionado.")
-    else:
-        print("Error: Debe ingresar un número valido.")
+            i = 0
+            while i < len(libros) and not encontrado:
+                if libros[i][0] == id_eliminar:
+                    libros.pop(i)
+                    encontrado = True
+                    print("Libro eliminado con exito.")
+                else:
+                    i += 1
+            if not encontrado:
+                print("No se encontró un libro con el ID dado.")
+        else:
+            print("Error: Ingrese un numero valido.")
         
 def crear_prestamo(libros, prestamos, id_prestamo_actual):
     imprimir_libros(libros)
