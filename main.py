@@ -47,13 +47,14 @@ seguir = True
 
 while seguir:
     if rol_usuario == "empleado":
-        print("Seleccione una opción:")
+        print("\nSeleccione una opción:")
         print("1. Añadir libro")
         print("2. Eliminar libro")
         print("3. Crear prestamo")
         print("4. Eliminar prestamo")
-        print("5. Salir")
-
+        print("5. Ver lista de libros")
+        print("6. Ver lista de prestamos")
+        print("7. Salir")
 
         opcion = input("Ingrese el numero de la opción deseada: ")
         match opcion:
@@ -66,10 +67,14 @@ while seguir:
             case "4":
                 gestion.eliminar_prestamo(matriz_libros, matriz_prestamos)
             case "5":
+                gestion.imprimir_libros(matriz_libros)
+            case "6":
+                gestion.imprimir_prestamos(matriz_prestamos)
+            case "7":
                 print("Saliendo del programa.")
                 seguir = False
             case _:
-                print("Opción invalida")
+                print("Opcion invalida.")
                 
     elif rol_usuario == "cliente":
         
