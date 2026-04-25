@@ -1,7 +1,7 @@
 import gestion
 
 print("=========================================")
-print("    BIBLIOTEKEITOR 3000      ")
+print("    GESTION BIBLIOTECARIA - GRUPO 5      ")
 print("=========================================")
 
 #usuario = input("Ingrese su usuario: ")
