@@ -3,7 +3,8 @@ def imprimir_libros(libros):
     if len(libros) == 0:
         print("No hay libros registrados en el sistema.")
     else:
-        for libro in libros:
+        libros_ordenar = sorted(libros, key=lambda x: x[1]) #funcion lambda para que haya una, ordena por titulo [1]
+        for libro in libros_ordenar:
             #formato: Libro = [id_libro, titulo, autor, prestado S/N]
             print(f"ID: {libro[0]}, Titulo: {libro[1]}, Autor: {libro[2]}, Prestado: {libro[3]}")
     print("----------------------------------\n")
@@ -13,7 +14,8 @@ def imprimir_prestamos(prestamos):
     if len(prestamos) == 0:
         print("No hay prestamos existentes")
     else:
-        for p in prestamos:
+        prestamos_ordenar = sorted(prestamos, key=lambda x: x[2]) #lo mismo que la de imprimir libros pero ordena por nombre [2]
+        for p in prestamos_ordenar:
             print(f"ID prestamo: {p[0]}| ID Libro: {p[1]} | Solicitante: {p[2]}")
     print("----------------------------------\n")
     
