@@ -50,6 +50,9 @@ def add_libro(libros, id_actual):
     titulo = input("Ingrese el titulo del libro: ")
     autor = input("Ingrese el autor del libro: ")
     prestado = input("¿El libro está prestado? (S/N): ").upper()
+    #Agregar manejo de multiples ejemplares, mas datos, modificacion de registros.
+    #Agregar manejo de fechas, posible manejo de penalizacion
+    #Agregar busquedas de libros por autor, titulo etc.
     
     nuevo_libro = [id_actual, titulo, autor, prestado]
     libros.append(nuevo_libro)
