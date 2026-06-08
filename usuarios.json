@@ -1,0 +1,6 @@
+{"usuario": "empleado", "clave": "1234", "rol": "empleado"}
+{"usuario": "bibliotecario", "clave": "1234", "rol": "empleado"}
+{"usuario": "cliente", "clave": "1234", "rol": "cliente"}
+{"usuario": "juan", "clave": "1234", "rol": "cliente"}
+{"usuario": "maria", "clave": "1234", "rol": "cliente"}
+{"usuario": "carlos", "clave": "1234", "rol": "cliente"}

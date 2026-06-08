@@ -1,0 +1,3 @@
+{"id_prestamo": 1, "id_libro": 2, "solicitante": "Juan Perez", "fecha_prestamo": [10, 10, 2023], "fecha_esperada": [20, 10, 2023]}
+{"id_prestamo": 2, "id_libro": 5, "solicitante": "Maria Gomez", "fecha_prestamo": [1, 11, 2023], "fecha_esperada": [15, 11, 2023]}
+{"id_prestamo": 3, "id_libro": 4, "solicitante": "Carlos Lopez", "fecha_prestamo": [5, 12, 2023], "fecha_esperada": [12, 12, 2023]}
