@@ -1,5 +1,9 @@
 import json
 import os
+from colorama import Fore, Style, init
+
+# Inicializa colorama para que los colores se reseteen automaticamente tras cada print
+init(autoreset=True)
 
 def obtener_proximo_id(nombre_archivo):
     max_id = 0
@@ -17,27 +21,35 @@ def obtener_proximo_id(nombre_archivo):
     return max_id + 1
 
 def imprimir_libros(arch_libros):
-    print("\n--- Lista de libros existentes ---")
+    print(Fore.CYAN + Style.BRIGHT + "\n--- Lista de libros existentes ---")
     try:
         arch = open(arch_libros, "rt")
         for linea in arch:
             lib = json.loads(linea)
-            print(f"ID: {lib['id']} | Titulo: '{lib['titulo']}' | Autor: {lib['autor']} | Ed: {lib['edicion']} | Año: {lib['anio']} | Edt: {lib['editorial']} | Disp: {lib['cant_disp']}/{lib['cant_total']}")
+            print(f"ID: {lib['id']} | Titulo: '{lib['titulo']}' | Autor: {lib['autor']} | Ed: {lib['edicion']} | Año: {lib['año']} | Edt: {lib['editorial']} | Disp: {lib['cant_disp']}/{lib['cant_total']}")
     except FileNotFoundError:
-        print("No hay libros registrados.")
+        print(Fore.RED + "No hay libros registrados.")
     finally:
         try: arch.close()
         except NameError: pass
-    print("----------------------------------\n")
+    print(Fore.CYAN + "----------------------------------\n")
 
 def buscar_libro(arch_libros):
-    print("\n--- Buscar Libro ---")
-    print("1. Titulo | 2. Autor | 3. Editorial | 4. Año de publicacion")
-    opc = input("Seleccione criterio: ")
-    termino = input("Ingrese el termino de busqueda: ").lower()
-    encontrados = False
+    print(Fore.CYAN + Style.BRIGHT + "\n--- Buscar Libro ---")
+    print("1. Titulo | 2. Autor | 3. Editorial | 4. Año de publicacion | 5. Cancelar")
+    opc = input(Fore.YELLOW + "Seleccione criterio: " + Fore.RESET)
     
-    print("\nResultados:")
+    if opc == "5" or opc.lower() == "cancelar":
+        print(Fore.YELLOW + "Operacion cancelada.")
+        return
+
+    termino = input(Fore.YELLOW + "Ingrese el termino de busqueda (o 'cancelar'): " + Fore.RESET).lower()
+    if termino == "cancelar":
+        print(Fore.YELLOW + "Operacion cancelada.")
+        return
+
+    encontrados = False
+    print(Fore.GREEN + "\nResultados:")
     try:
         arch = open(arch_libros, "rt")
         for linea in arch:
@@ -46,10 +58,10 @@ def buscar_libro(arch_libros):
             if opc == "1" and termino in lib["titulo"].lower(): coincidencia = True
             elif opc == "2" and termino in lib["autor"].lower(): coincidencia = True
             elif opc == "3" and termino in lib["editorial"].lower(): coincidencia = True
-            elif opc == "4" and termino == str(lib["anio"]): coincidencia = True
+            elif opc == "4" and termino == str(lib["año"]): coincidencia = True
                 
             if coincidencia:
-                print(f"ID: {lib['id']} | Titulo: '{lib['titulo']}' | Autor: {lib['autor']} | Año: {lib['anio']} | Disp: {lib['cant_disp']}/{lib['cant_total']}")
+                print(f"ID: {lib['id']} | Titulo: '{lib['titulo']}' | Autor: {lib['autor']} | Año: {lib['año']} | Disp: {lib['cant_disp']}/{lib['cant_total']}")
                 encontrados = True
     except FileNotFoundError:
         pass
@@ -58,31 +70,45 @@ def buscar_libro(arch_libros):
         except NameError: pass
             
     if not encontrados:
-        print("No se encontraron coincidencias.")
+        print(Fore.RED + "No se encontraron coincidencias.")
 
 def add_libro(arch_libros, id_actual):
-    print("\n--- Añadir un nuevo libro ---")
+    print(Fore.CYAN + Style.BRIGHT + "\n--- Añadir un nuevo libro ---")
+    titulo = input(Fore.YELLOW + "Titulo (o 'cancelar'): " + Fore.RESET)
+    if titulo.lower() == "cancelar": return id_actual
+    
+    autor = input(Fore.YELLOW + "Autor (o 'cancelar'): " + Fore.RESET)
+    if autor.lower() == "cancelar": return id_actual
+    
+    edicion = input(Fore.YELLOW + "Edicion (o 'cancelar'): " + Fore.RESET)
+    if edicion.lower() == "cancelar": return id_actual
+    
+    try:
+        entrada_año = input(Fore.YELLOW + "Año de publicacion (o 'cancelar'): " + Fore.RESET)
+        if entrada_año.lower() == "cancelar": return id_actual
+        año = int(entrada_año)
+        
+        entrada_cant = input(Fore.YELLOW + "Cantidad de ejemplares (o 'cancelar'): " + Fore.RESET)
+        if entrada_cant.lower() == "cancelar": return id_actual
+        cantidad = int(entrada_cant)
+    except ValueError:
+        print(Fore.RED + "Error: El año y la cantidad deben ser numeros enteros.")
+        return id_actual
+        
+    editorial = input(Fore.YELLOW + "Editorial (o 'cancelar'): " + Fore.RESET)
+    if editorial.lower() == "cancelar": return id_actual
+    
     try:
         nuevo_libro = {
-            "id": id_actual,
-            "titulo": input("Titulo: "),
-            "autor": input("Autor: "),
-            "edicion": input("Edicion: "),
-            "anio": int(input("Año de publicacion: ")),
-            "editorial": input("Editorial: "),
-            "cant_total": int(input("Cantidad de ejemplares: "))
+            "id": id_actual, "titulo": titulo, "autor": autor, "edicion": edicion,
+            "año": año, "editorial": editorial, "cant_total": cantidad, "cant_disp": cantidad
         }
-        nuevo_libro["cant_disp"] = nuevo_libro["cant_total"]
-        
         arch = open(arch_libros, "at")
         arch.write(json.dumps(nuevo_libro) + "\n")
-        print("Libro añadido con exito.")
+        print(Fore.GREEN + "Libro añadido con exito.")
         return id_actual + 1
-    except ValueError:
-        print("Error: El año y la cantidad deben ser numeros enteros.")
-        return id_actual
     except OSError as error:
-        print("Error al guardar:", error)
+        print(Fore.RED + f"Error al guardar: {error}")
         return id_actual
     finally:
         try: arch.close()
@@ -90,53 +116,76 @@ def add_libro(arch_libros, id_actual):
 
 def modificar_libro(arch_libros):
     imprimir_libros(arch_libros)
+    entrada = input(Fore.YELLOW + "Ingrese el ID del libro a modificar (o 'cancelar'): " + Fore.RESET)
+    if entrada.lower() == 'cancelar':
+        print(Fore.YELLOW + "Operacion cancelada.")
+        return
+        
     try:
-        id_mod = int(input("Ingrese el ID del libro a modificar: "))
+        id_mod = int(entrada)
         ent = open(arch_libros, "rt")
         sal = open("temp_libros.json", "wt")
         modificado = False
+        abortar = False
         
         for linea in ent:
             lib = json.loads(linea)
             if lib["id"] == id_mod:
-                print("1. Titulo | 2. Autor | 3. Edicion | 4. Año | 5. Editorial | 6. Cant. Total")
-                opc = input("Que campo desea modificar? ")
+                print(Fore.CYAN + "1. Titulo | 2. Autor | 3. Edicion | 4. Año | 5. Editorial | 6. Cant. Total | 7. Cancelar")
+                opc = input(Fore.YELLOW + "Que campo desea modificar? " + Fore.RESET)
+                
+                if opc == "7" or opc.lower() == "cancelar":
+                    abortar = True
+                    break
+                    
                 match opc:
-                    case "1": lib["titulo"] = input("Nuevo Titulo: ")
-                    case "2": lib["autor"] = input("Nuevo Autor: ")
-                    case "3": lib["edicion"] = input("Nueva Edicion: ")
-                    case "4": lib["anio"] = int(input("Nuevo Año: "))
-                    case "5": lib["editorial"] = input("Nueva Editorial: ")
+                    case "1": lib["titulo"] = input(Fore.YELLOW + "Nuevo Titulo: " + Fore.RESET)
+                    case "2": lib["autor"] = input(Fore.YELLOW + "Nuevo Autor: " + Fore.RESET)
+                    case "3": lib["edicion"] = input(Fore.YELLOW + "Nueva Edicion: " + Fore.RESET)
+                    case "4": lib["año"] = int(input(Fore.YELLOW + "Nuevo Año: " + Fore.RESET))
+                    case "5": lib["editorial"] = input(Fore.YELLOW + "Nueva Editorial: " + Fore.RESET)
                     case "6": 
-                        nueva_cant = int(input("Nueva Cantidad Total: "))
+                        nueva_cant = int(input(Fore.YELLOW + "Nueva Cantidad Total: " + Fore.RESET))
                         dif = nueva_cant - lib["cant_total"]
                         lib["cant_total"] = nueva_cant
                         lib["cant_disp"] += dif
-                    case _: print("Opcion invalida.")
+                    case _: print(Fore.RED + "Opcion invalida.")
                 modificado = True
             sal.write(json.dumps(lib) + "\n")
             
     except (FileNotFoundError, ValueError, OSError):
-        print("Error en la operacion.")
+        print(Fore.RED + "Error en la operacion o ingreso invalido.")
+        abortar = True
     finally:
         try: ent.close()
         except NameError: pass
         try: sal.close()
         except NameError: pass
         
+    if abortar:
+        try: os.remove("temp_libros.json")
+        except: pass
+        print(Fore.YELLOW + "Operacion cancelada.")
+        return
+        
     if modificado:
         os.remove(arch_libros)
         os.rename("temp_libros.json", arch_libros)
-        print("Libro modificado.")
+        print(Fore.GREEN + "Libro modificado exitosamente.")
     else:
         try: os.remove("temp_libros.json")
         except: pass
-        print("ID no encontrado.")
+        print(Fore.RED + "ID no encontrado.")
 
 def eliminar_libro(arch_libros):
     imprimir_libros(arch_libros)
+    entrada = input(Fore.YELLOW + "Ingrese el ID del libro que desea eliminar (o 'cancelar'): " + Fore.RESET)
+    if entrada.lower() == 'cancelar':
+        print(Fore.YELLOW + "Operacion cancelada.")
+        return
+        
     try:
-        id_eliminar = int(input("Ingrese el ID del libro que desea eliminar: "))
+        id_eliminar = int(entrada)
         ent = open(arch_libros, "rt")
         sal = open("temp_libros.json", "wt")
         eliminado = False
@@ -148,7 +197,8 @@ def eliminar_libro(arch_libros):
             else:
                 sal.write(linea)
     except (FileNotFoundError, ValueError, OSError):
-        print("Error en la operacion.")
+        print(Fore.RED + "Error en la operacion o ingreso invalido.")
+        return
     finally:
         try: ent.close()
         except NameError: pass
@@ -158,12 +208,13 @@ def eliminar_libro(arch_libros):
     if eliminado:
         os.remove(arch_libros)
         os.rename("temp_libros.json", arch_libros)
-        print("Libro eliminado con exito.")
+        print(Fore.GREEN + "Libro eliminado con exito.")
     else:
         try: os.remove("temp_libros.json")
         except: pass
-        print("No se encontro un libro con el ID dado.")
+        print(Fore.RED + "No se encontro un libro con el ID dado.")
 
+# --- FUNCIONES AUXILIARES PARA EL MODULO DE PRESTAMOS ---
 def obtener_titulo(arch_libros, id_libro):
     titulo = "Desconocido"
     try:
