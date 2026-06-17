@@ -27,7 +27,7 @@ def imprimir_libros(arch_libros):
             lib = json.loads(linea)
             print(f"ID: {lib['id']} | Titulo: '{lib['titulo']}' | Autor: {lib['autor']} | Ed: {lib['edicion']} | Año: {lib['año']} | Edt: {lib['editorial']} | Disp: {lib['cant_disp']}/{lib['cant_total']}")
     except FileNotFoundError:
-        print(Fore.RED + "No hay libros registrados.")
+        print(Fore.RED + "No hay libros registrados")
     finally:
         try: arch.close()
         except NameError: pass
@@ -42,7 +42,7 @@ def mostrar_autores(arch_libros):
             lib = json.loads(linea)
             autores.add(lib["autor"]) 
     except FileNotFoundError:
-        print(Fore.RED + "No hay libros registrados.")
+        print(Fore.RED + "No hay libros registrados")
     finally:
         try: arch.close()
         except NameError: pass
@@ -59,12 +59,12 @@ def buscar_libro(arch_libros):
     opc = input(Fore.YELLOW + "Seleccione criterio: " + Fore.RESET)
     
     if opc == "5" or opc.lower() == "cancelar":
-        print(Fore.YELLOW + "Operacion cancelada.")
+        print(Fore.YELLOW + "Operacion cancelada")
         return
 
     termino = input(Fore.YELLOW + "Ingrese el termino de busqueda (o 'cancelar'): " + Fore.RESET).lower()
     if termino == "cancelar":
-        print(Fore.YELLOW + "Operacion cancelada.")
+        print(Fore.YELLOW + "Operacion cancelaada")
         return
 
     encontrados = False
@@ -89,7 +89,7 @@ def buscar_libro(arch_libros):
         except NameError: pass
             
     if not encontrados:
-        print(Fore.RED + "No se encontraron coincidencias.")
+        print(Fore.RED + "No se encontraron matches")
 
 def add_libro(arch_libros, id_actual):
     print(Fore.CYAN + Style.BRIGHT + "\n--- Añadir un nuevo libro ---")
@@ -124,10 +124,10 @@ def add_libro(arch_libros, id_actual):
         }
         arch = open(arch_libros, "at")
         arch.write(json.dumps(nuevo_libro) + "\n")
-        print(Fore.GREEN + "Libro añadido con exito.")
+        print(Fore.GREEN + "Libro agregado añadido con exito")
         return id_actual + 1
     except OSError as error:
-        print(Fore.RED + f"Error al guardar: {error}")
+        print(Fore.RED + f"error al guardar: {error}")
         return id_actual
     finally:
         try: arch.close()
@@ -135,9 +135,9 @@ def add_libro(arch_libros, id_actual):
 
 def modificar_libro(arch_libros):
     imprimir_libros(arch_libros)
-    entrada = input(Fore.YELLOW + "Ingrese el ID del libro a modificar (o 'cancelar'): " + Fore.RESET)
+    entrada = input(Fore.YELLOW + "Ingrese el ID del libro a modificar (o cancelar): " + Fore.RESET)
     if entrada.lower() == 'cancelar':
-        print(Fore.YELLOW + "Operacion cancelada.")
+        print(Fore.YELLOW + "Operacion cancelada")
         return
         
     try:
@@ -168,12 +168,12 @@ def modificar_libro(arch_libros):
                         dif = nueva_cant - lib["cant_total"]
                         lib["cant_total"] = nueva_cant
                         lib["cant_disp"] += dif
-                    case _: print(Fore.RED + "Opcion invalida.")
+                    case _: print(Fore.RED + "opcion invalida")
                 modificado = True
             sal.write(json.dumps(lib) + "\n")
             
     except (FileNotFoundError, ValueError, OSError):
-        print(Fore.RED + "Error en la operacion o ingreso invalido.")
+        print(Fore.RED + "error en la operacion o ingreso invalido")
         abortar = True
     finally:
         try: ent.close()
@@ -184,23 +184,23 @@ def modificar_libro(arch_libros):
     if abortar:
         try: os.remove("temp_libros.json")
         except: pass
-        print(Fore.YELLOW + "Operacion cancelada.")
+        print(Fore.YELLOW + "ooperacion cancelada")
         return
         
     if modificado:
         os.remove(arch_libros)
         os.rename("temp_libros.json", arch_libros)
-        print(Fore.GREEN + "Libro modificado exitosamente.")
+        print(Fore.GREEN + "Libro modificado con exito")
     else:
         try: os.remove("temp_libros.json")
         except: pass
-        print(Fore.RED + "ID no encontrado.")
+        print(Fore.RED + "ID no encontrado")
 
 def eliminar_libro(arch_libros):
     imprimir_libros(arch_libros)
-    entrada = input(Fore.YELLOW + "Ingrese el ID del libro que desea eliminar (o 'cancelar'): " + Fore.RESET)
+    entrada = input(Fore.YELLOW + "Iingrese el ID del libro que desea eliminar (o cancelar): " + Fore.RESET)
     if entrada.lower() == 'cancelar':
-        print(Fore.YELLOW + "Operacion cancelada.")
+        print(Fore.YELLOW + "operacion cancelada.")
         return
         
     try:
@@ -216,7 +216,7 @@ def eliminar_libro(arch_libros):
             else:
                 sal.write(linea)
     except (FileNotFoundError, ValueError, OSError):
-        print(Fore.RED + "Error en la operacion o ingreso invalido.")
+        print(Fore.RED + "Error en la operacion o ingreso invalido")
         return
     finally:
         try: ent.close()
@@ -227,11 +227,11 @@ def eliminar_libro(arch_libros):
     if eliminado:
         os.remove(arch_libros)
         os.rename("temp_libros.json", arch_libros)
-        print(Fore.GREEN + "Libro eliminado con exito.")
+        print(Fore.GREEN + "Libro eliminado con exito")
     else:
         try: os.remove("temp_libros.json")
         except: pass
-        print(Fore.RED + "No se encontro un libro con el ID dado.")
+        print(Fore.RED + "No se encontro un libro con el ID dado")
 
 def obtener_titulo(arch_libros, id_libro):
     titulo = "Desconocido"
@@ -276,7 +276,7 @@ def modificar_stock(arch_libros, id_libro, variacion):
             if lib["id"] == id_libro:
                 lib["cant_disp"] += variacion
                 try:
-                    assert lib["cant_disp"] >= 0, "Error critico: Stock negativo detectado"
+                    assert lib["cant_disp"] >= 0, "error critico: Stock negativo detectado"
                 except AssertionError as msg:
                     print(Fore.RED + str(msg))
                     lib["cant_disp"] = 0 # fuerzo a 0 para no romper el archivo que usamos de base de datos

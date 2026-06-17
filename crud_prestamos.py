@@ -87,12 +87,12 @@ def imprimir_prestamos(arch_prestamos, arch_libros):
             print(f"ID Prestamo: {p['id_prestamo']} | Solicitante: {p['solicitante']} | Libro: '{titulo_libro}'")
             print(f"   Otorgado: {f_p} | Vencimiento: {f_e}")
             if penalizacion > 0:
-                print(Fore.RED + f"   ¡ATRASADO! Penalizacion acumulada: ${penalizacion}")
+                print(Fore.RED + f"   ATRASADO - Penalizacion acumulada: ${penalizacion}")
             else:
-                print(Fore.GREEN + "   Estado: Al dia.")
+                print(Fore.GREEN + "   Estado: Al dia")
             print("-")
     except FileNotFoundError:
-        print(Fore.RED + "No hay prestamos activos.")
+        print(Fore.RED + "No hay prestamos activos")
     finally:
         try: arch.close()
         except NameError: pass
@@ -102,7 +102,7 @@ def crear_prestamo(arch_libros, arch_prestamos, id_prestamo_actual):
     CRUD_LIBROS.imprimir_libros(arch_libros)
     entrada = input(Fore.YELLOW + "Ingrese el ID del libro a prestar (o 'cancelar'): " + Fore.RESET)
     if entrada.lower() == 'cancelar':
-        print(Fore.YELLOW + "Operacion cancelada.")
+        print(Fore.YELLOW + "operacion cancelada")
         return id_prestamo_actual
 
     try:
@@ -110,16 +110,16 @@ def crear_prestamo(arch_libros, arch_prestamos, id_prestamo_actual):
         
         titulo = CRUD_LIBROS.obtener_titulo(arch_libros, id_libro)
         if titulo == "Desconocido":
-            print(Fore.RED + "No se encontro un libro con el ID provisto.")
+            print(Fore.RED + "No se encontro un libro con el ID provisto")
             return id_prestamo_actual
             
         if not CRUD_LIBROS.verificar_disponibilidad(arch_libros, id_libro):
-            print(Fore.RED + "Operacion denegada: no hay ejemplares disponibles.")
+            print(Fore.RED + "operacion denegada: no hay ejemplares disponibles")
             return id_prestamo_actual
             
-        nombre = input(Fore.YELLOW + "Nombre del solicitante (o 'cancelar'): " + Fore.RESET)
+        nombre = input(Fore.YELLOW + "Nombre del solicitante (o cancelar): " + Fore.RESET)
         if nombre.lower() == 'cancelar':
-            print(Fore.YELLOW + "Operacion cancelada.")
+            print(Fore.YELLOW + "operacion cancelada")
             return id_prestamo_actual
 
         hoy = datetime.date.today()
@@ -140,7 +140,7 @@ def crear_prestamo(arch_libros, arch_prestamos, id_prestamo_actual):
             arch_p = open(arch_prestamos, "at")
             arch_p.write(json.dumps(nuevo_prestamo) + "\n")
         except OSError:
-            print(Fore.RED + "Error al guardar el prestamo.")
+            print(Fore.RED + "Error al guardar el prestamo")
             return id_prestamo_actual
         finally:
             try: arch_p.close()
@@ -148,20 +148,20 @@ def crear_prestamo(arch_libros, arch_prestamos, id_prestamo_actual):
             
         CRUD_LIBROS.modificar_stock(arch_libros, id_libro, -1)
         
-        print(Fore.GREEN + "\nPrestamo registrado exitosamente.")
-        print(Fore.CYAN + f"Fecha de entrega: {f_prestamo[0]:02d}/{f_prestamo[1]:02d}/{f_prestamo[2]}")
+        print(Fore.GREEN + "\nPrestamo registrado exitosamente")
+        print(Fore.CYAN + f"fecha de entrega: {f_prestamo[0]:02d}/{f_prestamo[1]:02d}/{f_prestamo[2]}")
         print(Fore.CYAN + f"Debe devolverse el: {f_esperada[0]:02d}/{f_esperada[1]:02d}/{f_esperada[2]}")
         return id_prestamo_actual + 1
         
     except ValueError:
-        print(Fore.RED + "Error: debe ingresar un numero valido.")
+        print(Fore.RED + "error: debe ingresar un numero valido")
     return id_prestamo_actual
 
 def eliminar_prestamo(arch_libros, arch_prestamos):
     print(Fore.CYAN + Style.BRIGHT + "\n--- Devolucion de prestamo ---")
-    entrada = input(Fore.YELLOW + "Ingrese el ID del prestamo a cerrar (o 'cancelar'): " + Fore.RESET)
+    entrada = input(Fore.YELLOW + "ingrese el ID del prestamo a cerrar (o cancelar): " + Fore.RESET)
     if entrada.lower() == 'cancelar':
-        print(Fore.YELLOW + "Operacion cancelada.")
+        print(Fore.YELLOW + "operacion cancelada")
         return
 
     try:
@@ -180,19 +180,19 @@ def eliminar_prestamo(arch_libros, arch_prestamos):
                 
                 # fecha para calculo de multa f_real = fecha real
                 f_real = datetime.date.today()
-                print(Fore.YELLOW + f"Procesando devolucion con fecha de hoy: {f_real.strftime('%d/%m/%Y')}")
+                print(Fore.YELLOW + f"Procesando devolucíon con fecha de hoy: {f_real.strftime('%d/%m/%Y')}")
                 
                 penalizacion = calcular_penalizacion(p["fecha_esperada"], f_real)
                 
                 if penalizacion > 0:
-                    print(Fore.RED + f"\n¡ATENCION! El usuario se ha retrasado.")
+                    print(Fore.RED + f"\nATENCION El usuario se ha retrasado")
                     print(Fore.RED + f"Debe abonar una penalizacion de: ${penalizacion}")
                 else:
-                    print(Fore.GREEN + "\nDevolucion a tiempo. Sin penalizacion.")
+                    print(Fore.GREEN + "\nDevolucion a tiempo. Sin penalizacion")
             else:
                 sal_p.write(linea)
     except (FileNotFoundError, ValueError, OSError):
-        print(Fore.RED + "Error en la operacion o ingreso invalido.")
+        print(Fore.RED + "Error en la operacion o ingreso invalido")
         abortar = True
     finally:
         try: ent_p.close()
@@ -203,7 +203,7 @@ def eliminar_prestamo(arch_libros, arch_prestamos):
     if abortar:
         try: os.remove("temp_prestamos.json")
         except: pass
-        print(Fore.YELLOW + "Operacion cancelada.")
+        print(Fore.YELLOW + "Operacion cancelada")
         return
 
     if encontrado:
@@ -211,8 +211,8 @@ def eliminar_prestamo(arch_libros, arch_prestamos):
         os.rename("temp_prestamos.json", arch_prestamos)
         
         CRUD_LIBROS.modificar_stock(arch_libros, id_libro_devuelto, 1)
-        print(Fore.GREEN + "Prestamo cerrado y libro retornado al stock exitosamente.")
+        print(Fore.GREEN + "Prestamo cerrado y libro retornado al stock exitosamente")
     else:
         try: os.remove("temp_prestamos.json")
         except: pass
-        print(Fore.RED + "No se encontro un prestamo con el ID indicado.")
+        print(Fore.RED + "No se encontro un prestamo con el ID indicado")
