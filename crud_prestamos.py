@@ -1,11 +1,12 @@
 import json
 import os
+import datetime
 from colorama import Fore, Style, init
 import crud_libros as CRUD_LIBROS
 
 init(autoreset=True)
 
-# --- FUNCIONES AUXILIARES DE FECHAS ---
+#tuve que poner un calculo para año bisiesto porque si justo le pegabamos a uno se rompia todo
 def es_bisiesto(año):
     return (año % 4 == 0 and año % 100 != 0) or (año % 400 == 0)
 
@@ -25,29 +26,32 @@ def fecha_a_dias(fecha):
     dias += dia
     return dias
 
-def calcular_penalizacion(fecha_esperada, fecha_real):
-    dias_esperados = fecha_a_dias(fecha_esperada)
-    dias_reales = fecha_a_dias(fecha_real)
+def calcular_penalizacion(fecha_esperada_lista, fecha_real_date):
+    # aca convierto el output de datetime a la estructura de la lista
+    f_real_lista = [fecha_real_date.day, fecha_real_date.month, fecha_real_date.year]
+    
+    dias_esperados = fecha_a_dias(fecha_esperada_lista)
+    dias_reales = fecha_a_dias(f_real_lista)
     dias_retraso = dias_reales - dias_esperados
+    
     if dias_retraso > 0:
         return dias_retraso * 1000  # $1000 por dia de atraso
     return 0
 
-def leer_fecha(msj):
-    while True:
-        try:
-            cadena = input(Fore.YELLOW + msj + " (DD/MM/AAAA o 'cancelar'): " + Fore.RESET)
-            if cadena.lower() == 'cancelar':
-                return None
-            partes = cadena.split("/")
-            if len(partes) != 3:
-                raise ValueError
-            dia, mes, año = int(partes[0]), int(partes[1]), int(partes[2])
-            if dia < 1 or dia > 31 or mes < 1 or mes > 12 or año < 1000:
-                raise ValueError
-            return [dia, mes, año]
-        except ValueError:
-            print(Fore.RED + "Formato invalido. Use numeros separados por barra (/).")
+def sumar_dias_a_fecha(fecha, dias_a_sumar):
+    dia = fecha[0] + dias_a_sumar
+    mes = fecha[1]
+    año = fecha[2]
+    
+    # Mientras los dias superen la cantidad maxima de dias del mes actual
+    while dia > dias_del_mes(mes, año):
+        dia -= dias_del_mes(mes, año) # Restamos los dias de ese mes
+        mes += 1                      # Pasamos al mes siguiente
+        if mes > 12:                  # Si nos pasamos de diciembre
+            mes = 1                   # Volvemos a enero
+            año += 1                  # Sumamos un año
+            
+    return [dia, mes, año]
 
 def obtener_proximo_id(nombre_archivo):
     max_id = 0
@@ -64,17 +68,14 @@ def obtener_proximo_id(nombre_archivo):
         except NameError: pass
     return max_id + 1
 
-# --- FUNCIONES DE PRESTAMOS ---
 def imprimir_prestamos(arch_prestamos, arch_libros):
     print(Fore.CYAN + Style.BRIGHT + "\n--- Lista de prestamos existentes ---")
     try:
         arch = open(arch_prestamos, "rt")
-        hoy = leer_fecha("Ingrese fecha actual para calcular estado")
-        if not hoy:
-            print(Fore.YELLOW + "Operacion cancelada.")
-            return
-
-        print("")
+        
+        hoy = datetime.date.today()
+        print(Fore.YELLOW + f"Calculando estados a la fecha de hoy: {hoy.strftime('%d/%m/%Y')}\n")
+        
         for linea in arch:
             p = json.loads(linea)
             titulo_libro = CRUD_LIBROS.obtener_titulo(arch_libros, p["id_libro"])
@@ -121,15 +122,11 @@ def crear_prestamo(arch_libros, arch_prestamos, id_prestamo_actual):
             print(Fore.YELLOW + "Operacion cancelada.")
             return id_prestamo_actual
 
-        f_prestamo = leer_fecha("Fecha de prestamo")
-        if not f_prestamo:
-            print(Fore.YELLOW + "Operacion cancelada.")
-            return id_prestamo_actual
-
-        f_esperada = leer_fecha("Fecha esperada de devolucion")
-        if not f_esperada:
-            print(Fore.YELLOW + "Operacion cancelada.")
-            return id_prestamo_actual
+        hoy = datetime.date.today()
+        f_prestamo = [hoy.day, hoy.month, hoy.year]
+        
+        #uso 14 dias para calcular la fecha de devolucion porque estoy cansado jefe
+        f_esperada = sumar_dias_a_fecha(f_prestamo, 14)
         
         nuevo_prestamo = {
             "id_prestamo": id_prestamo_actual,
@@ -151,7 +148,9 @@ def crear_prestamo(arch_libros, arch_prestamos, id_prestamo_actual):
             
         CRUD_LIBROS.modificar_stock(arch_libros, id_libro, -1)
         
-        print(Fore.GREEN + "Prestamo registrado exitosamente.")
+        print(Fore.GREEN + "\nPrestamo registrado exitosamente.")
+        print(Fore.CYAN + f"Fecha de entrega: {f_prestamo[0]:02d}/{f_prestamo[1]:02d}/{f_prestamo[2]}")
+        print(Fore.CYAN + f"Debe devolverse el: {f_esperada[0]:02d}/{f_esperada[1]:02d}/{f_esperada[2]}")
         return id_prestamo_actual + 1
         
     except ValueError:
@@ -176,13 +175,13 @@ def eliminar_prestamo(arch_libros, arch_prestamos):
         for linea in ent_p:
             p = json.loads(linea)
             if p["id_prestamo"] == id_prestamo:
-                f_real = leer_fecha("Ingrese la fecha real de devolucion")
-                if not f_real:
-                    abortar = True
-                    break # Rompemos el ciclo para no seguir procesando
-                
                 encontrado = True
                 id_libro_devuelto = p["id_libro"]
+                
+                # fecha para calculo de multa f_real = fecha real
+                f_real = datetime.date.today()
+                print(Fore.YELLOW + f"Procesando devolucion con fecha de hoy: {f_real.strftime('%d/%m/%Y')}")
+                
                 penalizacion = calcular_penalizacion(p["fecha_esperada"], f_real)
                 
                 if penalizacion > 0:

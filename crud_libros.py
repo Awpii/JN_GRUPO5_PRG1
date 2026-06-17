@@ -2,7 +2,6 @@ import json
 import os
 from colorama import Fore, Style, init
 
-# Inicializa colorama para que los colores se reseteen automaticamente tras cada print
 init(autoreset=True)
 
 def obtener_proximo_id(nombre_archivo):
@@ -32,6 +31,26 @@ def imprimir_libros(arch_libros):
     finally:
         try: arch.close()
         except NameError: pass
+    print(Fore.CYAN + "----------------------------------\n")
+
+def mostrar_autores(arch_libros):
+    print(Fore.CYAN + Style.BRIGHT + "\n--- Autores Registrados (Sin duplicados) ---")
+    autores = set() 
+    try:
+        arch = open(arch_libros, "rt")
+        for linea in arch:
+            lib = json.loads(linea)
+            autores.add(lib["autor"]) 
+    except FileNotFoundError:
+        print(Fore.RED + "No hay libros registrados.")
+    finally:
+        try: arch.close()
+        except NameError: pass
+        
+    if len(autores) > 0:
+        lista_formateada = [f"▪ {autor}" for autor in autores]
+        for a in lista_formateada:
+            print(Fore.GREEN + a)
     print(Fore.CYAN + "----------------------------------\n")
 
 def buscar_libro(arch_libros):
@@ -214,7 +233,6 @@ def eliminar_libro(arch_libros):
         except: pass
         print(Fore.RED + "No se encontro un libro con el ID dado.")
 
-# --- FUNCIONES AUXILIARES PARA EL MODULO DE PRESTAMOS ---
 def obtener_titulo(arch_libros, id_libro):
     titulo = "Desconocido"
     try:
@@ -249,6 +267,7 @@ def verificar_disponibilidad(arch_libros, id_libro):
 
 def modificar_stock(arch_libros, id_libro, variacion):
     """Suma o resta a la cantidad disponible de un libro"""
+    hubo_error = False
     try:
         ent = open(arch_libros, "rt")
         sal = open("temp_libros.json", "wt")
@@ -256,17 +275,23 @@ def modificar_stock(arch_libros, id_libro, variacion):
             lib = json.loads(linea)
             if lib["id"] == id_libro:
                 lib["cant_disp"] += variacion
+                try:
+                    assert lib["cant_disp"] >= 0, "Error critico: Stock negativo detectado"
+                except AssertionError as msg:
+                    print(Fore.RED + str(msg))
+                    lib["cant_disp"] = 0 # fuerzo a 0 para no romper el archivo que usamos de base de datos
             sal.write(json.dumps(lib) + "\n")
     except (FileNotFoundError, OSError):
-        pass
+        hubo_error = True
     finally:
         try: ent.close()
         except NameError: pass
         try: sal.close()
         except NameError: pass
         
-    try:
-        os.remove(arch_libros)
-        os.rename("temp_libros.json", arch_libros)
-    except OSError:
-        pass
+    if not hubo_error:
+        try:
+            os.remove(arch_libros)
+            os.rename("temp_libros.json", arch_libros)
+        except OSError:
+            pass

@@ -4,16 +4,15 @@ import crud_prestamos
 import os
 from colorama import Fore, Style, init
 
-# Inicializa colorama para Windows/Linux/Mac
 init(autoreset=True)
 
 print(Fore.CYAN + Style.BRIGHT + "=========================================")
 print(Fore.CYAN + Style.BRIGHT + "    GESTION BIBLIOTECARIA - GRUPO 5      ")
 print(Fore.CYAN + Style.BRIGHT + "=========================================")
 
-ARCH_USUARIOS = "usuarios.json"
-ARCH_LIBROS = "libros.json"
-ARCH_PRESTAMOS = "prestamos.json"
+ARCH_USUARIOS = "data/usuarios.json"
+ARCH_LIBROS = "data/libros.json"
+ARCH_PRESTAMOS = "data/prestamos.json"
 
 logueado = False
 rol_usuario = ""
@@ -33,7 +32,7 @@ while not logueado:
     if resultado == "ARCHIVO_NO_ENCONTRADO":
         print(Fore.RED + Style.BRIGHT + "\nERROR CRITICO: El archivo 'usuarios.json' no existe.")
         print(Fore.RED + "El programa esta buscando la base de datos en:")
-        print(Fore.RED + f"-> {os.getcwd()}")
+        print(Fore.RED + f"-> {ARCH_USUARIOS}")
         print(Fore.RED + "Por favor, mueva los archivos JSON a esa carpeta.")
         exit()
     elif resultado == "USUARIO_INEXISTENTE":
@@ -58,10 +57,11 @@ while seguir:
         print("3. Eliminar libro")
         print("4. Buscar libro")
         print("5. Ver lista completa de libros")
-        print("6. Crear prestamo")
-        print("7. Cerrar prestamo (Devolucion / Multas)")
-        print("8. Consultar prestamos vigentes")
-        print("9. Salir")
+        print("6. Ver autores registrados") # NUEVA OPCION (Usa SET y List Comprehension)
+        print("7. Crear prestamo")
+        print("8. Cerrar prestamo (Devolucion / Multas)")
+        print("9. Consultar prestamos vigentes")
+        print("10. Salir")
 
         opcion = input(Fore.YELLOW + "Ingrese opcion: " + Fore.RESET)
         match opcion:
@@ -70,10 +70,11 @@ while seguir:
             case "3": crud_libros.eliminar_libro(ARCH_LIBROS)
             case "4": crud_libros.buscar_libro(ARCH_LIBROS)
             case "5": crud_libros.imprimir_libros(ARCH_LIBROS)
-            case "6": id_prestamo_auto = crud_prestamos.crear_prestamo(ARCH_LIBROS, ARCH_PRESTAMOS, id_prestamo_auto)
-            case "7": crud_prestamos.eliminar_prestamo(ARCH_LIBROS, ARCH_PRESTAMOS)
-            case "8": crud_prestamos.imprimir_prestamos(ARCH_PRESTAMOS, ARCH_LIBROS)
-            case "9":
+            case "6": crud_libros.mostrar_autores(ARCH_LIBROS)
+            case "7": id_prestamo_auto = crud_prestamos.crear_prestamo(ARCH_LIBROS, ARCH_PRESTAMOS, id_prestamo_auto)
+            case "8": crud_prestamos.eliminar_prestamo(ARCH_LIBROS, ARCH_PRESTAMOS)
+            case "9": crud_prestamos.imprimir_prestamos(ARCH_PRESTAMOS, ARCH_LIBROS)
+            case "10":
                 print(Fore.YELLOW + "Saliendo del programa.")
                 seguir = False
             case _: print(Fore.RED + "Opcion invalida.")
